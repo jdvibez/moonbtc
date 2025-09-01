@@ -92,10 +92,40 @@
     .kpi span{font-weight:700; font-size:16px}
     .trading-signal .chip {font-size: 16px; padding: 10px 16px; font-weight: 700;}
     footer{color:var(--muted); padding:18px 20px 40px; text-align:center; font-size:12px}
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
     
     .chart-container {
         flex-grow: 1;
         margin-top: 12px;
+    }
+    
+    .donation-addresses {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .address-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .address-row label {
+      font-weight: 700;
+      flex-basis: 50px;
+      flex-shrink: 0;
+    }
+    .address-row input[type="text"] {
+      flex-grow: 1;
+      padding: 8px 10px;
+      border: 1px solid #ced4da;
+      background-color: #f8f9fa;
+      font-family: 'IBM Plex Mono', monospace;
+      color: var(--muted);
+      border-radius: var(--radius);
+      font-size: 14px;
+      min-width: 100px;
     }
     
     /* Layout placements */
@@ -269,6 +299,29 @@
         </article>
       </div>
 
+      <!-- DONATIONS CARD -->
+      <article class="card col-12">
+        <h2>Support This Project</h2>
+        <p class="muted mini" style="margin-top:-8px; margin-bottom:12px;">If you find this tool useful, consider a donation to help keep it running.</p>
+        <div class="donation-addresses">
+          <div class="address-row">
+            <label for="btc-address">BTC</label>
+            <input type="text" id="btc-address" value="bc1qrk8z9rq9ppvez60le2apx7nx03225rgkggvcgk" readonly>
+            <button onclick="copyAddress(this, 'btc-address')">Copy</button>
+          </div>
+          <div class="address-row">
+            <label for="evm-address">EVM</label>
+            <input type="text" id="evm-address" value="0xCC10D05CcAA609E0cfc83b6418dE33De3918ED4b" readonly>
+            <button onclick="copyAddress(this, 'evm-address')">Copy</button>
+          </div>
+          <div class="address-row">
+            <label for="sol-address">SOL</label>
+            <input type="text" id="sol-address" value="8QC5aSUWaf18szvTf27Jkd18oicwxApe12NkvErD6v5c" readonly>
+            <button onclick="copyAddress(this, 'sol-address')">Copy</button>
+          </div>
+        </div>
+      </article>
+
       <article class="card col-12">
         <p class="muted mini">
           • Price data provided by CoinGecko (fallback to CryptoCompare). Chart by TradingView. <br>
@@ -279,7 +332,7 @@
   </main>
 
   <footer>
-    Built for fun, not financial advice. © <span id="year"></span>
+    Built for fun by <a href="https://x.com/saulrugman" target="_blank" rel="noopener noreferrer">@saulrugman</a>, not financial advice. © <span id="year"></span>
   </footer>
 
   <script>
@@ -292,6 +345,25 @@
     }
     setInterval(setClock, 1000); setClock();
     document.getElementById('year').textContent = new Date().getFullYear();
+
+    function copyAddress(button, inputId) {
+      const input = document.getElementById(inputId);
+      input.select();
+      input.setSelectionRange(0, 99999); // For mobile devices
+
+      try {
+        document.execCommand('copy');
+        const originalText = button.textContent;
+        button.textContent = 'Copied!';
+        setTimeout(() => {
+          button.textContent = originalText;
+        }, 2000);
+      } catch (err) {
+        console.error('Failed to copy text: ', err);
+        // Fallback for browsers that don't support execCommand
+        alert('Failed to copy. Please copy the address manually.');
+      }
+    }
 
     // ---------- BTC PRICE ----------
     const el = {
@@ -443,4 +515,5 @@
   </script>
 </body>
 </html>
+
 
