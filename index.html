@@ -340,6 +340,27 @@
     const fmt = (n, c='USD') => new Intl.NumberFormat(undefined, {style:'currency', currency:c}).format(n);
     const fmtDec = (n, d=2)=> (Math.round(n*10**d)/10**d).toFixed(d);
 
+    const daysHours = (x) => {
+      const days = Math.floor(x);
+      const hrs = Math.round((x - days) * 24);
+      return (days > 0 ? `${days}d ` : '') + `${hrs}h`;
+    };
+
+    const formatCountdown = (daysDecimal) => {
+      let totalSeconds = daysDecimal * 24 * 60 * 60;
+      
+      const days = Math.floor(totalSeconds / 86400);
+      totalSeconds %= 86400;
+      const hours = Math.floor(totalSeconds / 3600);
+      totalSeconds %= 3600;
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = Math.floor(totalSeconds % 60);
+
+      const pad = (num) => String(num).padStart(2, '0');
+
+      return `${days}d ${pad(hours)}h ${pad(minutes)}m ${pad(seconds)}s`;
+    };
+
     function setClock(){
       document.getElementById('clock').textContent = new Date().toLocaleString(undefined, { dateStyle:'full', timeStyle:'medium' });
     }
@@ -465,11 +486,6 @@
       const d = moonData();
 
       // Moon UI
-      const daysHours = (x) => {
-        const days = Math.floor(x);
-        const hrs = Math.round((x - days) * 24);
-        return (days > 0 ? `${days}d ` : '') + `${hrs}h`;
-      };
       mEl.name.textContent = d.phaseName;
       mEl.illum.textContent = `${fmtDec(d.illum * 100, 1)}% lit`;
       mEl.age.textContent = `Age: ${fmtDec(d.age, 1)} d`;
@@ -490,8 +506,8 @@
         mEl.signalChip.textContent = 'SELL & TAKE PROFIT';
         mEl.signalChip.className = 'chip bad';
       }
-      mEl.nextBuy.textContent = daysHours(d.toNew);
-      mEl.nextSell.textContent = daysHours(d.toFull);
+      mEl.nextBuy.textContent = formatCountdown(d.toNew);
+      mEl.nextSell.textContent = formatCountdown(d.toFull);
     }
 
 
@@ -508,12 +524,11 @@
     }
 
     el.refresh.addEventListener('click', refreshAll);
-    setInterval(updateMoonAndSignalUI, 60 * 1000); // Update moon/signal every minute
+    setInterval(updateMoonAndSignalUI, 1000); // Update moon/signal every second for the countdown
     setInterval(fetchBTCPrice, 90 * 1000); // Update price every 90 seconds
 
     window.addEventListener('load', refreshAll);
   </script>
 </body>
 </html>
-
 
