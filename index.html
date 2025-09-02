@@ -53,6 +53,12 @@
     }
     .card h2{margin:0 0 12px; font-size:18px}
     .muted{color:var(--muted)}
+    .price {
+        font-size: 40px;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+        line-height: 1.1;
+    }
     .row{display:flex; gap:12px; align-items:center; flex-wrap:wrap}
     .chip{
       padding:6px 10px; border-radius:999px; font-size:12px; border:1px solid #ced4da;
@@ -93,6 +99,7 @@
     
     .chart-container {
         flex-grow: 1;
+        margin-top: 16px;
     }
     
     .donation-addresses {
@@ -204,6 +211,20 @@
       <!-- BTC PRICE CARD -->
       <article class="card col-7" aria-live="polite" style="display: flex; flex-direction: column;">
         <h2 data-translate="btc_price_title">Bitcoin Price</h2>
+        
+        <div class="row" style="justify-content:space-between">
+            <div>
+                <div class="price" id="price">—</div>
+                <div class="row mini" style="margin-top:6px">
+                    <span class="chip" id="change" data-translate-prefix="change_24h">24h: —</span>
+                </div>
+            </div>
+            <div style="text-align: right;">
+                <div class="mini muted" id="updated"></div>
+                <button id="refresh" data-translate="refresh_btn" style="margin-top: 4px;">Refresh</button>
+            </div>
+        </div>
+
         <div class="chart-container">
           <!-- TradingView Widget is initialized in JS to set language -->
           <div class="tradingview-widget-container" style="height:100%">
@@ -318,6 +339,9 @@
         notes_text: "• Price data provided by CoinGecko (fallback to CryptoCompare). Chart by TradingView. <br> • Moon calculations are based on a standard synodic cycle. Signals are for entertainment purposes only and do not constitute financial advice.",
         footer_text: "Built for fun by",
         footer_disclaimer: "not financial advice",
+        change_24h: "24h:",
+        updated: "Updated",
+        refresh_btn: "Refresh",
         // Dynamic content
         phaseNames: ["New Moon", "Waxing Crescent", "First Quarter", "Waxing Gibbous", "Full Moon", "Waning Gibbous", "Last Quarter", "Waning Crescent", "New Moon"],
         illum_lit: "% lit",
@@ -333,7 +357,7 @@
       },
       es: {
         app_title: "Tracker Luna + BTC",
-        app_subtitle: "Precio del Bitcoin en vivo · Fases lunares · Señales de Trading",
+        app_subtitle: "Precio de Bitcoin en vivo · Fases lunares · Señales de Trading",
         btc_price_title: "Precio de Bitcoin",
         moon_phase_title: "Fase Lunar",
         to_fq: "→ Cuarto Creciente",
@@ -351,6 +375,9 @@
         notes_text: "• Datos de precios de CoinGecko (con respaldo de CryptoCompare). Gráfico de TradingView. <br> • Los cálculos lunares se basan en un ciclo sinódico estándar. Las señales son solo para fines de entretenimiento y no constituyen asesoramiento financiero.",
         footer_text: "Creado por diversión por",
         footer_disclaimer: "no es asesoramiento financiero",
+        change_24h: "24h:",
+        updated: "Actualizado",
+        refresh_btn: "Refrescar",
         // Dynamic content
         phaseNames: ["Luna Nueva", "Creciente Iluminante", "Cuarto Creciente", "Gibosa Iluminante", "Luna Llena", "Gibosa Menguante", "Cuarto Menguante", "Creciente Menguante", "Luna Nueva"],
         illum_lit: "% iluminada",
@@ -383,6 +410,13 @@
           el.textContent = T[key];
         }
       });
+      document.querySelectorAll('[data-translate-prefix]').forEach(el => {
+        const key = el.dataset.translatePrefix;
+        const currentText = el.textContent.split(': ')[1] || '—';
+         if (T[key]) {
+          el.textContent = `${T[key]} ${currentText}`;
+        }
+      });
     }
 
     function updateSchema() {
@@ -405,6 +439,7 @@
 
     // ---------- Utilities ----------
     const fmtDec = (n, d=2)=> (Math.round(n*10**d)/10**d).toFixed(d);
+    const fmt = (n, c = 'USD') => new Intl.NumberFormat(lang, { style: 'currency', currency: c, minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
 
     const formatCountdown = (daysDecimal) => {
       let totalSeconds = daysDecimal * 24 * 60 * 60;
@@ -430,7 +465,6 @@
       input.setSelectionRange(0, 99999); 
       try {
         document.execCommand('copy');
-        const originalText = button.textContent;
         button.textContent = T.copied;
         setTimeout(() => { button.textContent = T.copy; }, 2000);
       } catch (err) {
@@ -438,16 +472,47 @@
       }
     }
 
-    async function updateSchemaPrice() {
+    const el = {
+        price: document.getElementById('price'),
+        change: document.getElementById('change'),
+        updated: document.getElementById('updated'),
+        refresh: document.getElementById('refresh'),
+    };
+
+    async function fetchBTCPrice() {
+        try {
+            const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd,eur&include_24hr_change=true');
+            if (!r.ok) throw new Error('API fetch failed');
+            const data = await r.json();
+            updatePriceUI(data.bitcoin);
+            updateSchemaPrice(data.bitcoin.usd);
+        } catch (e) {
+            console.error("Could not fetch price data:", e);
+            el.price.textContent = 'Error';
+        }
+    }
+
+    function updatePriceUI({ usd, usd_24h_change }) {
+        el.price.textContent = fmt(usd, 'USD');
+        const change = parseFloat(usd_24h_change);
+        if (Number.isFinite(change)) {
+            const s = (change >= 0 ? '+' : '') + fmtDec(change, 2) + '%';
+            el.change.textContent = `${T.change_24h} ${s}`;
+            el.change.classList.remove('ok', 'bad');
+            el.change.classList.add(change >= 0 ? 'ok' : 'bad');
+        } else {
+            el.change.textContent = `${T.change_24h} —`;
+            el.change.classList.remove('ok', 'bad');
+        }
+        el.updated.textContent = `${T.updated} ${new Date().toLocaleTimeString(lang)}`;
+    }
+
+
+    async function updateSchemaPrice(price) {
       try{
-        const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
-        if (!r.ok) return;
-        const data = await r.json();
-        const usd = data.bitcoin.usd;
-        
         const schemaElement = document.getElementById('app-schema');
         const schemaData = JSON.parse(schemaElement.textContent);
-        schemaData.mainEntity.offers.price = usd.toFixed(2);
+        schemaData.mainEntity.offers.price = price.toFixed(2);
         schemaElement.textContent = JSON.stringify(schemaData, null, 2);
       } catch (e) {
         console.error("Failed to update schema price:", e);
@@ -522,9 +587,11 @@
       if (isWaxing) {
         mEl.signalChip.textContent = T.signal_buy;
         mEl.signalChip.className = 'chip ok';
+        mEl.signalChip.style.alignSelf = 'flex-start';
       } else {
         mEl.signalChip.textContent = T.signal_sell;
         mEl.signalChip.className = 'chip bad';
+        mEl.signalChip.style.alignSelf = 'flex-start';
       }
       mEl.nextBuy.textContent = formatCountdown(d.toNew);
       mEl.nextSell.textContent = formatCountdown(d.toFull);
@@ -547,21 +614,28 @@
         });
     }
 
+    async function refreshAll() {
+        await fetchBTCPrice();
+    }
+
     // ---------- Boot ----------
     function initialize(){
       setLanguage();
       updateSchema();
       initializeTradingViewWidget();
       updateMoonAndSignalUI();
-      updateSchemaPrice();
+      refreshAll();
       setClock();
+      
       setInterval(setClock, 1000);
       setInterval(updateMoonAndSignalUI, 1000);
+      setInterval(fetchBTCPrice, 90000); // refresh price every 90s
+      
+      el.refresh.addEventListener('click', refreshAll);
     }
 
     window.addEventListener('load', initialize);
   </script>
 </body>
 </html>
-
 
