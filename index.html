@@ -53,9 +53,6 @@
     }
     .card h2{margin:0 0 12px; font-size:18px}
     .muted{color:var(--muted)}
-    .price{
-      font-size:40px; font-weight:700; letter-spacing:-.5px; line-height:1.1;
-    }
     .row{display:flex; gap:12px; align-items:center; flex-wrap:wrap}
     .chip{
       padding:6px 10px; border-radius:999px; font-size:12px; border:1px solid #ced4da;
@@ -64,7 +61,6 @@
     .chip.ok{border-color: rgba(40,167,69,.35); color:var(--ok); background:rgba(40,167,69,.1)}
     .chip.bad{border-color: rgba(220,53,69,.35); color:var(--danger); background:rgba(220,53,69,.1)}
     .mini{font-size:12px}
-    .controls{margin-top:10px; display:flex; gap:8px; align-items:center}
     button{
       background:#f1f3f6; color:var(--text); border:1px solid #ced4da;
       padding:8px 10px; border-radius:var(--radius); font:inherit; cursor:pointer;
@@ -97,7 +93,6 @@
     
     .chart-container {
         flex-grow: 1;
-        margin-top: 12px;
     }
     
     .donation-addresses {
@@ -197,8 +192,8 @@
     <div class="brand">
       <div class="logo">☾₿</div>
       <div>
-        <div>Moon + BTC Tracker</div>
-        <div class="sub">Live Bitcoin price · Lunar phases · Trading Signals</div>
+        <div data-translate="app_title">Moon + BTC Tracker</div>
+        <div class="sub" data-translate="app_subtitle">Live Bitcoin price · Lunar phases · Trading Signals</div>
       </div>
     </div>
     <div class="sub" id="clock">—</div>
@@ -208,47 +203,12 @@
     <section class="grid">
       <!-- BTC PRICE CARD -->
       <article class="card col-7" aria-live="polite" style="display: flex; flex-direction: column;">
-        <div> <!-- This wrapper div prevents flexbox from affecting the inner layout of this section -->
-          <div style="display:flex; justify-content:space-between; align-items:start; flex-wrap:wrap; gap:10px;">
-            <div>
-              <h2>Bitcoin Price</h2>
-              <div class="price" id="price-usd">—</div>
-            </div>
-            <div style="text-align:right">
-              <div class="muted mini" id="price-eur">—</div>
-              <div class="chip mini" id="change" style="margin-top:4px">24h: —</div>
-            </div>
-          </div>
-          <div class="controls">
-            <button id="refresh">Refresh</button>
-            <span class="mini muted" id="updated">Updated —</span>
-          </div>
-        </div>
+        <h2 data-translate="btc_price_title">Bitcoin Price</h2>
         <div class="chart-container">
-          <!-- TradingView Widget BEGIN -->
+          <!-- TradingView Widget is initialized in JS to set language -->
           <div class="tradingview-widget-container" style="height:100%">
             <div id="tradingview_chart" style="height:100%"></div>
-            <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-            <script type="text/javascript">
-            new TradingView.widget(
-            {
-              "autosize": true,
-              "symbol": "BITSTAMP:BTCUSD",
-              "interval": "D",
-              "timezone": "Etc/UTC",
-              "theme": "light",
-              "style": "1",
-              "locale": "en",
-              "toolbar_bg": "#f1f3f6",
-              "enable_publishing": false,
-              "hide_side_toolbar": false,
-              "allow_symbol_change": true,
-              "container_id": "tradingview_chart"
-            }
-            );
-            </script>
           </div>
-          <!-- TradingView Widget END -->
         </div>
       </article>
 
@@ -256,7 +216,7 @@
       <div class="col-5" style="display:flex; flex-direction:column; gap:16px;">
         <!-- MOON PHASE CARD -->
         <article class="card">
-          <h2>Moon Phase</h2>
+          <h2 data-translate="moon_phase_title">Moon Phase</h2>
           <div class="moon-wrap">
             <div class="moon" aria-hidden="true">
               <div class="lit" id="lit"></div>
@@ -265,14 +225,14 @@
             <div>
               <div class="row" style="gap:8px">
                 <span class="chip" id="phase-name">—</span>
-                <span class="chip" id="illum">—% lit</span>
-                <span class="chip" id="age">Age: — d</span>
+                <span class="chip" id="illum">—</span>
+                <span class="chip" id="age">—</span>
               </div>
               <div class="phase-grid" style="margin-top:10px">
-                <div class="kpi"><b>→ First Quarter</b><span id="to-fq">—</span></div>
-                <div class="kpi"><b>→ Full Moon</b><span id="to-full">—</span></div>
-                <div class="kpi"><b>→ Last Quarter</b><span id="to-lq">—</span></div>
-                <div class="kpi"><b>→ New Moon</b><span id="to-new">—</span></div>
+                <div class="kpi"><b data-translate="to_fq">→ First Quarter</b><span id="to-fq">—</span></div>
+                <div class="kpi"><b data-translate="to_full">→ Full Moon</b><span id="to-full">—</span></div>
+                <div class="kpi"><b data-translate="to_lq">→ Last Quarter</b><span id="to-lq">—</span></div>
+                <div class="kpi"><b data-translate="to_new">→ New Moon</b><span id="to-new">—</span></div>
               </div>
             </div>
           </div>
@@ -280,17 +240,17 @@
 
         <!-- TRADING SIGNALS CARD -->
         <article class="card">
-          <h2>Lunar Trading Signal</h2>
+          <h2 data-translate="signal_title">Lunar Trading Signal</h2>
           <div class="trading-signal" style="display:flex; flex-direction:column; gap:12px; align-items:stretch">
              <div class="chip" id="signal-chip" style="align-self: flex-start;">—</div>
-             <div class="kpi"><b>Next Buy Window Begins</b><span id="next-buy">—</span></div>
-             <div class="kpi"><b>Next Sell Window Begins</b><span id="next-sell">—</span></div>
+             <div class="kpi"><b data-translate="next_buy_window">Next Buy Window Begins</b><span id="next-buy">—</span></div>
+             <div class="kpi"><b data-translate="next_sell_window">Next Sell Window Begins</b><span id="next-sell">—</span></div>
           </div>
         </article>
         
         <!-- FEAR & GREED INDEX CARD -->
         <article class="card">
-          <h2>Market Sentiment</h2>
+          <h2 data-translate="sentiment_title">Market Sentiment</h2>
           <div>
             <a href="https://alternative.me/crypto/fear-and-greed-index/" target="_blank" rel="noopener noreferrer">
               <img src="https://alternative.me/crypto/fear-and-greed-index.png" alt="Crypto Fear & Greed Index" style="width: 100%; max-width: 350px; margin: auto; display: block;">
@@ -301,29 +261,29 @@
 
       <!-- DONATIONS CARD -->
       <article class="card col-12">
-        <h2>Support This Project</h2>
-        <p class="muted mini" style="margin-top:-8px; margin-bottom:12px;">If you find this tool useful, consider a donation to help keep it running.</p>
+        <h2 data-translate="support_title">Support This Project</h2>
+        <p class="muted mini" style="margin-top:-8px; margin-bottom:12px;" data-translate="support_subtitle">If you find this tool useful, consider a donation to help keep it running.</p>
         <div class="donation-addresses">
           <div class="address-row">
             <label for="btc-address">BTC</label>
             <input type="text" id="btc-address" value="bc1qrk8z9rq9ppvez60le2apx7nx03225rgkggvcgk" readonly>
-            <button onclick="copyAddress(this, 'btc-address')">Copy</button>
+            <button data-translate-copy="copy" onclick="copyAddress(this, 'btc-address')">Copy</button>
           </div>
           <div class="address-row">
             <label for="evm-address">EVM</label>
             <input type="text" id="evm-address" value="0xCC10D05CcAA609E0cfc83b6418dE33De3918ED4b" readonly>
-            <button onclick="copyAddress(this, 'evm-address')">Copy</button>
+            <button data-translate-copy="copy" onclick="copyAddress(this, 'evm-address')">Copy</button>
           </div>
           <div class="address-row">
             <label for="sol-address">SOL</label>
             <input type="text" id="sol-address" value="8QC5aSUWaf18szvTf27Jkd18oicwxApe12NkvErD6v5c" readonly>
-            <button onclick="copyAddress(this, 'sol-address')">Copy</button>
+            <button data-translate-copy="copy" onclick="copyAddress(this, 'sol-address')">Copy</button>
           </div>
         </div>
       </article>
 
       <article class="card col-12">
-        <p class="muted mini">
+        <p class="muted mini" data-translate="notes_text">
           • Price data provided by CoinGecko (fallback to CryptoCompare). Chart by TradingView. <br>
           • Moon calculations are based on a standard synodic cycle. Signals are for entertainment purposes only and do not constitute financial advice.
         </p>
@@ -332,113 +292,170 @@
   </main>
 
   <footer>
-    Built for fun by <a href="https://x.com/saulrugman" target="_blank" rel="noopener noreferrer">@saulrugman</a>, not financial advice. © <span id="year"></span>
+    <span data-translate="footer_text">Built for fun by</span> <a href="https://x.com/saulrugman" target="_blank" rel="noopener noreferrer">@saulrugman</a>, <span data-translate="footer_disclaimer">not financial advice</span>. © <span id="year"></span>
   </footer>
 
+  <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
   <script>
-    // ---------- Utilities ----------
-    const fmt = (n, c='USD') => new Intl.NumberFormat(undefined, {style:'currency', currency:c}).format(n);
-    const fmtDec = (n, d=2)=> (Math.round(n*10**d)/10**d).toFixed(d);
-
-    const daysHours = (x) => {
-      const days = Math.floor(x);
-      const hrs = Math.round((x - days) * 24);
-      return (days > 0 ? `${days}d ` : '') + `${hrs}h`;
+    const translations = {
+      en: {
+        app_title: "Moon + BTC Tracker",
+        app_subtitle: "Live Bitcoin price · Lunar phases · Trading Signals",
+        btc_price_title: "Bitcoin Price",
+        moon_phase_title: "Moon Phase",
+        to_fq: "→ First Quarter",
+        to_full: "→ Full Moon",
+        to_lq: "→ Last Quarter",
+        to_new: "→ New Moon",
+        signal_title: "Lunar Trading Signal",
+        next_buy_window: "Next Buy Window Begins",
+        next_sell_window: "Next Sell Window Begins",
+        sentiment_title: "Market Sentiment",
+        support_title: "Support This Project",
+        support_subtitle: "If you find this tool useful, consider a donation to help keep it running.",
+        copy: "Copy",
+        copied: "Copied!",
+        notes_text: "• Price data provided by CoinGecko (fallback to CryptoCompare). Chart by TradingView. <br> • Moon calculations are based on a standard synodic cycle. Signals are for entertainment purposes only and do not constitute financial advice.",
+        footer_text: "Built for fun by",
+        footer_disclaimer: "not financial advice",
+        // Dynamic content
+        phaseNames: ["New Moon", "Waxing Crescent", "First Quarter", "Waxing Gibbous", "Full Moon", "Waning Gibbous", "Last Quarter", "Waning Crescent", "New Moon"],
+        illum_lit: "% lit",
+        age_days: "Age: {age} d",
+        signal_buy: "BUY & HOLD",
+        signal_sell: "SELL & TAKE PROFIT",
+        // SEO Schema
+        schema_desc: "A real-time dashboard tracking the price of Bitcoin (BTC) alongside lunar phases, providing speculative trading signals based on the moon's cycle.",
+        schema_q1_name: "What are the data sources for this tracker?",
+        schema_q1_answer: "Price data is provided by CoinGecko with a fallback to CryptoCompare. The interactive chart is provided by TradingView. Moon calculations are computed based on a standard synodic cycle.",
+        schema_q2_name: "Is the Lunar Trading Signal financial advice?",
+        schema_q2_answer: "No. The lunar signals are for entertainment and educational purposes only and do not constitute financial advice. All financial decisions should be made with care and consultation with a qualified professional."
+      },
+      es: {
+        app_title: "Tracker Luna + BTC",
+        app_subtitle: "Precio del Bitcoin en vivo · Fases lunares · Señales de Trading",
+        btc_price_title: "Precio de Bitcoin",
+        moon_phase_title: "Fase Lunar",
+        to_fq: "→ Cuarto Creciente",
+        to_full: "→ Luna Llena",
+        to_lq: "→ Cuarto Menguante",
+        to_new: "→ Luna Nueva",
+        signal_title: "Señal de Trading Lunar",
+        next_buy_window: "Próxima Ventana de Compra",
+        next_sell_window: "Próxima Ventana de Venta",
+        sentiment_title: "Sentimiento del Mercado",
+        support_title: "Apoya este Proyecto",
+        support_subtitle: "Si esta herramienta te resulta útil, considera hacer una donación para mantenerla en funcionamiento.",
+        copy: "Copiar",
+        copied: "¡Copiado!",
+        notes_text: "• Datos de precios de CoinGecko (con respaldo de CryptoCompare). Gráfico de TradingView. <br> • Los cálculos lunares se basan en un ciclo sinódico estándar. Las señales son solo para fines de entretenimiento y no constituyen asesoramiento financiero.",
+        footer_text: "Creado por diversión por",
+        footer_disclaimer: "no es asesoramiento financiero",
+        // Dynamic content
+        phaseNames: ["Luna Nueva", "Creciente Iluminante", "Cuarto Creciente", "Gibosa Iluminante", "Luna Llena", "Gibosa Menguante", "Cuarto Menguante", "Creciente Menguante", "Luna Nueva"],
+        illum_lit: "% iluminada",
+        age_days: "Edad: {age} d",
+        signal_buy: "COMPRAR Y MANTENER",
+        signal_sell: "VENDER Y TOMAR GANANCIAS",
+        // SEO Schema
+        schema_desc: "Un dashboard en tiempo real que sigue el precio de Bitcoin (BTC) junto con las fases lunares, proporcionando señales de trading especulativas basadas en el ciclo de la luna.",
+        schema_q1_name: "¿Cuáles son las fuentes de datos para este tracker?",
+        schema_q1_answer: "Los datos de precios son proporcionados por CoinGecko con respaldo de CryptoCompare. El gráfico interactivo es de TradingView. Los cálculos lunares se computan basados en un ciclo sinódico estándar.",
+        schema_q2_name: "¿La Señal de Trading Lunar es asesoramiento financiero?",
+        schema_q2_answer: "No. Las señales lunares son para fines de entretenimiento y educativos solamente y no constituyen asesoramiento financiero. Todas las decisiones financieras deben tomarse con cuidado y consultando a un profesional calificado."
+      }
     };
+    
+    const lang = navigator.language.startsWith('es') ? 'es' : 'en';
+    const T = translations[lang];
+
+    function setLanguage() {
+      document.documentElement.lang = lang;
+      document.querySelectorAll('[data-translate]').forEach(el => {
+        const key = el.dataset.translate;
+        if (T[key]) {
+          el.innerHTML = T[key];
+        }
+      });
+       document.querySelectorAll('[data-translate-copy]').forEach(el => {
+        const key = el.dataset.translateCopy;
+        if (T[key]) {
+          el.textContent = T[key];
+        }
+      });
+    }
+
+    function updateSchema() {
+      try {
+        const schemaElement = document.getElementById('app-schema');
+        const schemaData = JSON.parse(schemaElement.textContent);
+        
+        schemaData.name = T.app_title;
+        schemaData.description = T.schema_desc;
+        schemaData.subjectOf.mainEntity[0].name = T.schema_q1_name;
+        schemaData.subjectOf.mainEntity[0].acceptedAnswer.text = T.schema_q1_answer;
+        schemaData.subjectOf.mainEntity[1].name = T.schema_q2_name;
+        schemaData.subjectOf.mainEntity[1].acceptedAnswer.text = T.schema_q2_answer;
+        
+        schemaElement.textContent = JSON.stringify(schemaData, null, 2);
+      } catch(e) {
+        console.error("Failed to update schema:", e);
+      }
+    }
+
+    // ---------- Utilities ----------
+    const fmtDec = (n, d=2)=> (Math.round(n*10**d)/10**d).toFixed(d);
 
     const formatCountdown = (daysDecimal) => {
       let totalSeconds = daysDecimal * 24 * 60 * 60;
-      
       const days = Math.floor(totalSeconds / 86400);
       totalSeconds %= 86400;
       const hours = Math.floor(totalSeconds / 3600);
       totalSeconds %= 3600;
       const minutes = Math.floor(totalSeconds / 60);
       const seconds = Math.floor(totalSeconds % 60);
-
       const pad = (num) => String(num).padStart(2, '0');
-
       return `${days}d ${pad(hours)}h ${pad(minutes)}m ${pad(seconds)}s`;
     };
 
     function setClock(){
-      document.getElementById('clock').textContent = new Date().toLocaleString(undefined, { dateStyle:'full', timeStyle:'medium' });
+      document.getElementById('clock').textContent = new Date().toLocaleString(lang, { dateStyle:'full', timeStyle:'medium' });
     }
-    setInterval(setClock, 1000); setClock();
+    
     document.getElementById('year').textContent = new Date().getFullYear();
 
     function copyAddress(button, inputId) {
       const input = document.getElementById(inputId);
       input.select();
-      input.setSelectionRange(0, 99999); // For mobile devices
-
+      input.setSelectionRange(0, 99999); 
       try {
         document.execCommand('copy');
         const originalText = button.textContent;
-        button.textContent = 'Copied!';
-        setTimeout(() => {
-          button.textContent = originalText;
-        }, 2000);
+        button.textContent = T.copied;
+        setTimeout(() => { button.textContent = T.copy; }, 2000);
       } catch (err) {
         console.error('Failed to copy text: ', err);
-        // Fallback for browsers that don't support execCommand
-        alert('Failed to copy. Please copy the address manually.');
       }
     }
 
-    // ---------- BTC PRICE ----------
-    const el = {
-      priceUSD: document.getElementById('price-usd'),
-      priceEUR: document.getElementById('price-eur'),
-      change: document.getElementById('change'),
-      updated: document.getElementById('updated'),
-      refresh: document.getElementById('refresh')
-    };
-
-    async function fetchBTCPrice(){
+    async function updateSchemaPrice() {
       try{
-        const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd,eur&include_24hr_change=true');
-        if (!r.ok) throw new Error('CoinGecko API failed');
+        const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
+        if (!r.ok) return;
         const data = await r.json();
-        return {
-          usd: data.bitcoin.usd,
-          eur: data.bitcoin.eur,
-          change: data.bitcoin.usd_24h_change
-        };
-      } catch(e) {
-        console.warn("CoinGecko failed, using fallback. Error:", e);
-        const r2 = await fetch('https://min-api.cryptocompare.com/data/price?fsym=BTC&tsyms=USD,EUR');
-        const data2 = await r2.json();
-        return { usd: data2.USD, eur: data2.EUR, change: NaN };
-      }
-    }
-
-    function updatePriceUI({usd, eur, change}){
-      el.priceUSD.textContent = fmt(usd, 'USD');
-      el.priceEUR.textContent = fmt(eur, 'EUR');
-      if(Number.isFinite(change)){
-        const s = (change >= 0 ? '+' : '') + fmtDec(change, 2) + '%';
-        el.change.textContent = '24h: ' + s;
-        el.change.className = 'chip mini ' + (change >= 0 ? 'ok' : 'bad');
-      } else {
-        el.change.textContent = '24h: —';
-        el.change.className = 'chip mini';
-      }
-      el.updated.textContent = 'Updated ' + new Date().toLocaleTimeString();
-      
-      // Update SEO Schema with live price
-      try {
+        const usd = data.bitcoin.usd;
+        
         const schemaElement = document.getElementById('app-schema');
         const schemaData = JSON.parse(schemaElement.textContent);
         schemaData.mainEntity.offers.price = usd.toFixed(2);
-        schemaElement.textContent = JSON.stringify(schemaData);
+        schemaElement.textContent = JSON.stringify(schemaData, null, 2);
       } catch (e) {
-        console.error("Failed to update schema:", e);
+        console.error("Failed to update schema price:", e);
       }
     }
 
     // ---------- MOON & TRADING SIGNALS ----------
-    const SYNODIC = 29.530588853; // days
+    const SYNODIC = 29.530588853; 
     const EPOCH = Date.UTC(2000, 0, 6, 18, 14, 0);
 
     const mEl = {
@@ -461,10 +478,9 @@
       const illum = (1 - Math.cos(2 * Math.PI * (age / SYNODIC))) / 2;
 
       const phaseEdges = [0, 1.84566, 5.53699, 9.22831, 12.91963, 16.61096, 20.30228, 23.99361, 27.68493, SYNODIC];
-      const phaseNames = ["New Moon", "Waxing Crescent", "First Quarter", "Waxing Gibbous", "Full Moon", "Waning Gibbous", "Last Quarter", "Waning Crescent", "New Moon"];
-      let phaseName = phaseNames[phaseNames.length - 1];
+      let phaseIndex = phaseEdges.length - 1;
       for(let i=0; i < phaseEdges.length - 1; i++){
-        if(age >= phaseEdges[i] && age < phaseEdges[i+1]){ phaseName = phaseNames[i]; break; }
+        if(age >= phaseEdges[i] && age < phaseEdges[i+1]){ phaseIndex = i; break; }
       }
 
       const timeTo = (target) => {
@@ -474,7 +490,7 @@
       };
       
       return {
-        age, illum, phaseName,
+        age, illum, phaseIndex,
         toNew: timeTo(SYNODIC),
         toFQ: timeTo(SYNODIC / 4),
         toFull: timeTo(SYNODIC / 2),
@@ -484,11 +500,16 @@
     
     function updateMoonAndSignalUI(){
       const d = moonData();
+      
+      const daysHours = (x) => {
+        const days = Math.floor(x);
+        const hrs = Math.round((x - days) * 24);
+        return (days > 0 ? `${days}d ` : '') + `${hrs}h`;
+      };
 
-      // Moon UI
-      mEl.name.textContent = d.phaseName;
-      mEl.illum.textContent = `${fmtDec(d.illum * 100, 1)}% lit`;
-      mEl.age.textContent = `Age: ${fmtDec(d.age, 1)} d`;
+      mEl.name.textContent = T.phaseNames[d.phaseIndex];
+      mEl.illum.textContent = `${fmtDec(d.illum * 100, 1)} ${T.illum_lit}`;
+      mEl.age.textContent = T.age_days.replace('{age}', fmtDec(d.age, 1));
       mEl.toFQ.textContent = daysHours(d.toFQ);
       mEl.toFull.textContent = daysHours(d.toFull);
       mEl.toLQ.textContent = daysHours(d.toLQ);
@@ -497,38 +518,50 @@
       const xShift = -Math.cos(2 * Math.PI * (d.age / SYNODIC)) * 48;
       mEl.lit.style.transform = `translateX(${xShift}%)`;
 
-      // Signal UI
-      const isWaxing = d.age < (SYNODIC / 2); // From New Moon to Full Moon
+      const isWaxing = d.age < (SYNODIC / 2);
       if (isWaxing) {
-        mEl.signalChip.textContent = 'BUY & HOLD';
+        mEl.signalChip.textContent = T.signal_buy;
         mEl.signalChip.className = 'chip ok';
       } else {
-        mEl.signalChip.textContent = 'SELL & TAKE PROFIT';
+        mEl.signalChip.textContent = T.signal_sell;
         mEl.signalChip.className = 'chip bad';
       }
       mEl.nextBuy.textContent = formatCountdown(d.toNew);
       mEl.nextSell.textContent = formatCountdown(d.toFull);
     }
-
-
-    // ---------- Boot ----------
-    async function refreshAll(){
-      try {
-        const price = await fetchBTCPrice();
-        updatePriceUI(price);
-      } catch (e) {
-        console.error("Could not fetch price data:", e);
-        el.priceUSD.textContent = 'Error';
-      }
-      updateMoonAndSignalUI();
+    
+    function initializeTradingViewWidget() {
+        new TradingView.widget({
+          "autosize": true,
+          "symbol": "BITSTAMP:BTCUSD",
+          "interval": "D",
+          "timezone": "Etc/UTC",
+          "theme": "light",
+          "style": "1",
+          "locale": lang,
+          "toolbar_bg": "#f1f3f6",
+          "enable_publishing": false,
+          "hide_side_toolbar": false,
+          "allow_symbol_change": true,
+          "container_id": "tradingview_chart"
+        });
     }
 
-    el.refresh.addEventListener('click', refreshAll);
-    setInterval(updateMoonAndSignalUI, 1000); // Update moon/signal every second for the countdown
-    setInterval(fetchBTCPrice, 90 * 1000); // Update price every 90 seconds
+    // ---------- Boot ----------
+    function initialize(){
+      setLanguage();
+      updateSchema();
+      initializeTradingViewWidget();
+      updateMoonAndSignalUI();
+      updateSchemaPrice();
+      setClock();
+      setInterval(setClock, 1000);
+      setInterval(updateMoonAndSignalUI, 1000);
+    }
 
-    window.addEventListener('load', refreshAll);
+    window.addEventListener('load', initialize);
   </script>
 </body>
 </html>
+
 
