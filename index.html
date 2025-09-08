@@ -172,7 +172,7 @@
       align-items: center;
       justify-content: center;
       color: white;
-      font-size: 24px;
+      font-size: 20px;
       font-family: 'IBM Plex Mono', monospace;
     }
     
@@ -238,7 +238,7 @@
     @media (max-width: 920px){
       .col-7,.col-5{grid-column: span 12}
       .chart-container {
-        height: 450px; /* Set fixed height for chart on mobile */
+        height: 450px;
         flex-grow: 0;
       }
     }
@@ -287,7 +287,6 @@
           </div>
         </div>
         <div class="chart-container">
-          <!-- TradingView Widget BEGIN -->
           <div class="tradingview-widget-container" style="height:100%">
             <div id="tradingview_chart" style="height:100%"></div>
             <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
@@ -310,7 +309,6 @@
             );
             </script>
           </div>
-          <!-- TradingView Widget END -->
         </div>
       </article>
 
@@ -439,7 +437,8 @@
     function setClock(){
       document.getElementById('clock').textContent = new Date().toLocaleString(undefined, { dateStyle:'full', timeStyle:'medium' });
     }
-    setInterval(setClock, 1000); setClock();
+    setInterval(setClock, 1000); 
+    setClock();
     document.getElementById('year').textContent = new Date().getFullYear();
 
     function copyAddress(button, inputId) {
@@ -547,21 +546,14 @@
     }
     
     function createMoonShape(phase, illumination) {
-      // Convert phase to angle (0 = new moon, 0.5 = full moon, 1 = new moon again)
-      const phaseAngle = phase * 2 * Math.PI;
-      
       if (illumination < 0.01) {
-        // New Moon - completely dark
         return 'circle(0% at center)';
       } else if (illumination > 0.99) {
-        // Full Moon - completely lit
         return 'circle(50% at center)';
       } else if (phase < 0.5) {
-        // Waxing phases (growing from right)
         const terminator = 50 - (illumination * 50);
         return `ellipse(50% ${terminator}% at center)`;
       } else {
-        // Waning phases (shrinking from right)
         const terminator = (illumination * 50);
         return `ellipse(50% ${terminator}% at center)`;
       }
@@ -579,12 +571,11 @@
       mEl.toLQ.textContent = daysHours(d.toLQ);
       mEl.toNew.textContent = daysHours(d.toNew);
 
-      // Improved moon visualization
+      // Moon visualization
       const phase = d.age / SYNODIC;
       const clipPath = createMoonShape(phase, d.illum);
       mEl.lit.style.clipPath = clipPath;
 
-      // For waning phases, we need to flip the illumination direction
       if (phase > 0.5) {
         mEl.lit.style.transform = 'scaleX(-1)';
       } else {
@@ -604,7 +595,7 @@
       mEl.nextSell.textContent = formatCountdown(d.toFull);
     }
 
-    // ---------- Boot ----------
+    // ---------- Main Functions ----------
     async function refreshAll(){
       try {
         const price = await fetchBTCPrice();
@@ -616,11 +607,10 @@
       updateMoonAndSignalUI();
     }
 
+    // ---------- Event Listeners ----------
     el.refresh.addEventListener('click', refreshAll);
     setInterval(updateMoonAndSignalUI, 1000);
-    setInterval(fetchBTCPrice, 90 * 1000);
-
-    window.addEventListener('load', refreshAll);
+    setInterval(refreshAll, 90 * 1000);
 
     // ---------- PANDORA CHATBOT WIDGET ----------
     const chatToggle = document.getElementById('chatToggle');
@@ -637,7 +627,6 @@
         chatToggle.style.transform = 'rotate(180deg)';
         isChatOpen = true;
         
-        // Load iframe only when opened for the first time
         if (!isChatLoaded) {
           chatIframe.src = 'https://pandoramoon.vercel.app/';
           isChatLoaded = true;
@@ -655,7 +644,6 @@
       isChatOpen = false;
     });
     
-    // Close chat when clicking outside
     document.addEventListener('click', function(e) {
       if (isChatOpen && !chatContainer.contains(e.target) && e.target !== chatToggle) {
         chatContainer.classList.remove('open');
@@ -664,6 +652,17 @@
       }
     });
     
-    // Handle iframe loading
     chatIframe.addEventListener('load', function() {
-      console.
+      console.log('Pandora chatbot loaded successfully');
+    });
+    
+    chatIframe.addEventListener('error', function() {
+      console.error('Failed to load Pandora chatbot');
+      chatContainer.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--muted); font-family: inherit;">Failed to load Pandora. Please try again later.</div>';
+    });
+
+    // ---------- Initialize ----------
+    window.addEventListener('load', refreshAll);
+  </script>
+</body>
+</html>
