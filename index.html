@@ -244,25 +244,17 @@
     }
     
     @media (max-width: 480px) {
-  /* 1. Adjust the main widget container */
-  .chatbot-widget {
-    /* Make the parent container span the full screen width */
-    left: 0;
-    right: 0;
-    /* Re-align the toggle button to the right within this new space */
-    display: flex;
-    justify-content: flex-end;
-    padding-right: 20px;
-  }
-
-  /* 2. Position the chat window inside the corrected container */
   .chat-iframe-container {
+    /* Set the width and height as intended */
     width: calc(100vw - 40px);
     height: 70vh;
-    bottom: 80px;
-    /* Now that the parent is full-width, these rules will center the window correctly */
-    left: 20px;
-    right: 20px;
+
+    /* Unset inherited horizontal positioning */
+    right: auto;
+    left: 50%;
+    
+    /* Pull the element back by half its own width to center it */
+    transform: translateX(-50%);
   }
 }
   </style>
