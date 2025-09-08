@@ -243,9 +243,16 @@
       }
     }
     
-    @media (max-width: 480px) {
+   @media (max-width: 480px) {
+  /* 1. Prevent the parent from blocking clicks */
+  .chatbot-widget {
+    /* This ensures the container is only as wide as the button inside it */
+    width: auto; 
+  }
+
+  /* 2. Center the chat window reliably */
   .chat-iframe-container {
-    /* Set the width and height as intended */
+    /* Set the width and height */
     width: calc(100vw - 40px);
     height: 70vh;
 
