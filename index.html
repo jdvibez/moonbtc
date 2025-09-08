@@ -244,24 +244,30 @@
     }
     
    @media (max-width: 480px) {
-  /* 1. Prevent the parent from blocking clicks */
+  /* Keep the launcher button behavior */
   .chatbot-widget {
-    /* This ensures the container is only as wide as the button inside it */
-    width: auto; 
+    width: auto;
   }
 
-  /* 2. Center the chat window reliably */
+  /* Make the panel fixed to the viewport and center it */
   .chat-iframe-container {
-    /* Set the width and height */
-    width: calc(100vw - 40px);
-    height: 70vh;
-
-    /* Unset inherited horizontal positioning */
-    right: auto;
+    position: fixed; /* instead of absolute inside a small parent */
     left: 50%;
-    
-    /* Pull the element back by half its own width to center it */
-    transform: translateX(-50%);
+    right: auto;
+    bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    width: calc(100vw - 40px);          /* 20px margin on each side */
+    height: 70vh;                        /* your chosen height */
+    /* Combine X and Y movement in one transform */
+    transform: translate(-50%, 20px);    /* closed state (slightly lowered) */
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  /* Open state: same transform axis, just lift it up */
+  .chat-iframe-container.open {
+    transform: translate(-50%, 0);
+    opacity: 1;
+    visibility: visible;
   }
 }
   </style>
