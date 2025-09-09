@@ -243,33 +243,37 @@
       }
     }
     
-   @media (max-width: 480px) {
-  /* Keep the launcher button behavior */
-  .chatbot-widget {
-    width: auto;
-  }
+    /* Fixed mobile chat styles */
+    @media (max-width: 480px) {
+      .chatbot-widget {
+        bottom: 20px;
+        right: 20px;
+        left: auto;
+        width: auto;
+      }
 
-  /* Make the panel fixed to the viewport and center it */
-  .chat-iframe-container {
-    position: fixed; /* instead of absolute inside a small parent */
-    left: 50%;
-    right: auto;
-    bottom: calc(20px + env(safe-area-inset-bottom, 0px));
-    width: calc(100vw - 40px);          /* 20px margin on each side */
-    height: 70vh;                        /* your chosen height */
-    /* Combine X and Y movement in one transform */
-    transform: translate(-50%, 20px);    /* closed state (slightly lowered) */
-    opacity: 0;
-    visibility: hidden;
-  }
+      .chat-iframe-container {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        right: auto;
+        bottom: auto;
+        width: calc(100vw - 40px);
+        height: 70vh;
+        max-width: 400px;
+        max-height: 600px;
+        transform: translate(-50%, -50%) translateY(20px);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
 
-  /* Open state: same transform axis, just lift it up */
-  .chat-iframe-container.open {
-    transform: translate(-50%, 0);
-    opacity: 1;
-    visibility: visible;
-  }
-}
+      .chat-iframe-container.open {
+        transform: translate(-50%, -50%);
+        opacity: 1;
+        visibility: visible;
+      }
+    }
   </style>
 </head>
 <body>
