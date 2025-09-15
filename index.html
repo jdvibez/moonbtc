@@ -670,4 +670,41 @@
         isChatOpen = true;
         
         if (!isChatLoaded) {
-          chatIframe.src = 'https://
+          chatIframe.src = 'https://pandoramoon.vercel.app/';
+          isChatLoaded = true;
+        }
+      } else {
+        chatContainer.classList.remove('open');
+        chatToggle.style.transform = 'rotate(0deg)';
+        isChatOpen = false;
+      }
+    });
+    
+    closeChat.addEventListener('click', function() {
+      chatContainer.classList.remove('open');
+      chatToggle.style.transform = 'rotate(0deg)';
+      isChatOpen = false;
+    });
+    
+    document.addEventListener('click', function(e) {
+      if (isChatOpen && !chatContainer.contains(e.target) && e.target !== chatToggle) {
+        chatContainer.classList.remove('open');
+        chatToggle.style.transform = 'rotate(0deg)';
+        isChatOpen = false;
+      }
+    });
+    
+    chatIframe.addEventListener('load', function() {
+      console.log('Pandora chatbot loaded successfully');
+    });
+    
+    chatIframe.addEventListener('error', function() {
+      console.error('Failed to load Pandora chatbot');
+      chatContainer.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--muted); font-family: inherit;">Failed to load Pandora. Please try again later.</div>';
+    });
+
+    // ---------- Initialize ----------
+    window.addEventListener('load', refreshAll);
+  </script>
+</body>
+</html>
