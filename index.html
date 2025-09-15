@@ -70,7 +70,7 @@
       padding:8px 10px; border-radius:var(--radius); font:inherit; cursor:pointer;
     }
     
-    /* Improved Moon Visualization */
+    /* Fixed Moon Visualization */
     .moon-wrap{display:flex; gap:18px; align-items:center; flex-wrap:wrap}
     .moon{
       width:120px; height:120px; border-radius:50%; position:relative;
@@ -101,7 +101,6 @@
         #b8b8b8 60%, 
         #a8a8a8 80%, 
         #999 100%);
-      opacity: 1;
     }
     
     .phase-grid{display:grid; gap:10px; grid-template-columns: repeat(2, minmax(0,1fr));}
@@ -538,7 +537,7 @@
       el.updated.textContent = 'Updated ' + new Date().toLocaleTimeString();
     }
 
-    // ---------- IMPROVED MOON & TRADING SIGNALS ----------
+    // ---------- FIXED MOON PHASE CALCULATION & VISUALIZATION ----------
     const SYNODIC = 29.530588853; // days
     const EPOCH = Date.UTC(2000, 0, 6, 18, 14, 0);
 
@@ -583,17 +582,29 @@
       };
     }
     
-    function createMoonShape(phase, illumination) {
+    function createMoonClipPath(age, illumination) {
+      const phase = age / SYNODIC; // 0 to 1
+      
       if (illumination < 0.01) {
+        // New moon - completely dark
         return 'circle(0% at center)';
       } else if (illumination > 0.99) {
+        // Full moon - completely lit
         return 'circle(50% at center)';
-      } else if (phase < 0.5) {
-        const terminator = 50 - (illumination * 50);
-        return `ellipse(50% ${terminator}% at center)`;
+      }
+      
+      // Calculate the position of the terminator (day/night boundary)
+      // The terminator moves from left (0%) to center (50%) to right (100%)
+      const terminatorPos = phase < 0.5 ? 
+        (50 * (1 - illumination * 2)) : // Waxing: terminator moves right
+        (50 * (1 - (1 - illumination) * 2)); // Waning: terminator moves left
+      
+      if (phase < 0.5) {
+        // Waxing phases: light appears from the right
+        return `inset(0 ${terminatorPos}% 0 0)`;
       } else {
-        const terminator = (illumination * 50);
-        return `ellipse(50% ${terminator}% at center)`;
+        // Waning phases: light disappears from the right  
+        return `inset(0 0 0 ${terminatorPos}%)`;
       }
     }
     
@@ -609,16 +620,9 @@
       mEl.toLQ.textContent = daysHours(d.toLQ);
       mEl.toNew.textContent = daysHours(d.toNew);
 
-      // Moon visualization
-      const phase = d.age / SYNODIC;
-      const clipPath = createMoonShape(phase, d.illum);
+      // Fixed moon visualization with proper vertical terminator
+      const clipPath = createMoonClipPath(d.age, d.illum);
       mEl.lit.style.clipPath = clipPath;
-
-      if (phase > 0.5) {
-        mEl.lit.style.transform = 'scaleX(-1)';
-      } else {
-        mEl.lit.style.transform = 'scaleX(1)';
-      }
 
       // Signal UI
       const isWaxing = d.age < (SYNODIC / 2);
@@ -666,41 +670,4 @@
         isChatOpen = true;
         
         if (!isChatLoaded) {
-          chatIframe.src = 'https://pandoramoon.vercel.app/';
-          isChatLoaded = true;
-        }
-      } else {
-        chatContainer.classList.remove('open');
-        chatToggle.style.transform = 'rotate(0deg)';
-        isChatOpen = false;
-      }
-    });
-    
-    closeChat.addEventListener('click', function() {
-      chatContainer.classList.remove('open');
-      chatToggle.style.transform = 'rotate(0deg)';
-      isChatOpen = false;
-    });
-    
-    document.addEventListener('click', function(e) {
-      if (isChatOpen && !chatContainer.contains(e.target) && e.target !== chatToggle) {
-        chatContainer.classList.remove('open');
-        chatToggle.style.transform = 'rotate(0deg)';
-        isChatOpen = false;
-      }
-    });
-    
-    chatIframe.addEventListener('load', function() {
-      console.log('Pandora chatbot loaded successfully');
-    });
-    
-    chatIframe.addEventListener('error', function() {
-      console.error('Failed to load Pandora chatbot');
-      chatContainer.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--muted); font-family: inherit;">Failed to load Pandora. Please try again later.</div>';
-    });
-
-    // ---------- Initialize ----------
-    window.addEventListener('load', refreshAll);
-  </script>
-</body>
-</html>
+          chatIframe.src = 'https://
