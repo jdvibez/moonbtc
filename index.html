@@ -583,28 +583,26 @@
     }
     
     function createMoonClipPath(age, illumination) {
-      const phase = age / SYNODIC; // 0 to 1
-      
       if (illumination < 0.01) {
-        // New moon - completely dark
         return 'circle(0% at center)';
       } else if (illumination > 0.99) {
-        // Full moon - completely lit
         return 'circle(50% at center)';
       }
       
-      // Calculate the position of the terminator (day/night boundary)
-      // The terminator moves from left (0%) to center (50%) to right (100%)
-      const terminatorPos = phase < 0.5 ? 
-        (50 * (1 - illumination * 2)) : // Waxing: terminator moves right
-        (50 * (1 - (1 - illumination) * 2)); // Waning: terminator moves left
+      // Simple approach: use illumination directly for vertical terminator
+      // For Last Quarter (age ~22d), we want left half lit
+      // For First Quarter (age ~7d), we want right half lit
+      
+      const phase = age / SYNODIC; // 0 to 1
       
       if (phase < 0.5) {
-        // Waxing phases: light appears from the right
-        return `inset(0 ${terminatorPos}% 0 0)`;
+        // Waxing: 0 to 0.5, light grows from right
+        const terminator = 50 + (illumination - 0.5) * 100;
+        return `polygon(${Math.max(0, terminator)}% 0%, 100% 0%, 100% 100%, ${Math.max(0, terminator)}% 100%)`;
       } else {
-        // Waning phases: light disappears from the right  
-        return `inset(0 0 0 ${terminatorPos}%)`;
+        // Waning: 0.5 to 1, light shrinks from right  
+        const terminator = illumination * 100;
+        return `polygon(0% 0%, ${terminator}% 0%, ${terminator}% 100%, 0% 100%)`;
       }
     }
     
