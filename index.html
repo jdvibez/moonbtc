@@ -245,19 +245,20 @@
     /* Fixed mobile chat styles */
     @media (max-width: 480px) {
       .chatbot-widget {
+        position: fixed;
         bottom: 20px;
         right: 20px;
         left: auto;
-        width: auto;
+        z-index: 1000;
       }
 
       .chat-iframe-container {
-        position: absolute;
-        bottom: 80px;
-        right: 0;
-        left: -340px; /* Position to the left of the button */
-        width: 340px;
-        height: 500px;
+        position: fixed;
+        bottom: 90px;
+        right: 20px;
+        left: 20px;
+        width: auto;
+        height: 400px;
         transform: translateY(20px);
         opacity: 0;
         visibility: hidden;
@@ -269,24 +270,18 @@
         opacity: 1;
         visibility: visible;
       }
-      
-      /* Ensure it doesn't go off the left edge of screen */
-      .chatbot-widget {
+    }
+    
+    /* For very small screens, use full overlay */
+    @media (max-width: 360px) {
+      .chat-iframe-container {
+        position: fixed;
+        top: 20px;
+        left: 20px;
         right: 20px;
-        min-width: 360px; /* Ensure enough space for chat window */
-      }
-      
-      /* Alternative: If screen is too narrow, use full width overlay */
-      @media (max-width: 400px) {
-        .chat-iframe-container {
-          position: fixed;
-          top: 10px;
-          left: 10px;
-          right: 10px;
-          bottom: 90px;
-          width: auto;
-          height: auto;
-        }
+        bottom: 90px;
+        width: auto;
+        height: auto;
       }
     }
   </style>
@@ -591,54 +586,36 @@
       
       const phase = age / SYNODIC; // 0 to 1
       
-      // Use polygon to create curved moon phases with multiple points
-      const createCurvedTerminator = (centerX, isWaxing, curvature = 0.3) => {
-        const points = [];
-        const steps = 20; // Number of points for smooth curve
-        
-        for (let i = 0; i <= steps; i++) {
-          const y = (i / steps) * 100; // 0% to 100% vertically
-          
-          // Create curved terminator line
-          const normalizedY = (i / steps - 0.5) * 2; // -1 to 1
-          const curveOffset = curvature * (1 - normalizedY * normalizedY) * 50; // Parabolic curve
-          
-          let x = centerX;
-          if (isWaxing) {
-            x = centerX - curveOffset; // Curve bulges left for waxing
-          } else {
-            x = centerX + curveOffset; // Curve bulges right for waning
-          }
-          
-          points.push(`${x}% ${y}%`);
+      if (phase < 0.5) {
+        // Waxing phases: light appears on RIGHT side first
+        if (illumination <= 0.5) {
+          // Waxing Crescent: thin crescent on RIGHT
+          const crescentWidth = illumination * 2; // 0 to 1 (as fraction of radius)
+          const ellipseWidth = crescentWidth * 50; // 0% to 50%
+          const ellipsePosition = 100 - (crescentWidth * 25); // Position from right edge
+          return `ellipse(${ellipseWidth}% 50% at ${ellipsePosition}% 50%)`;
+        } else {
+          // Waxing Gibbous: most of moon visible, dark crescent on LEFT
+          const darkWidth = (1 - illumination) * 2; // 1 to 0
+          const ellipseWidth = darkWidth * 50;
+          const ellipsePosition = darkWidth * 25;
+          return `ellipse(${100 - ellipseWidth}% 50% at 50% 50%)`;
         }
-        return points;
-      };
-      
-      if (phase <= 0.25) {
-        // Waxing Crescent: thin crescent on RIGHT
-        const terminatorX = 100 - (illumination * 100 * 2); // Start from right edge
-        const curvePoints = createCurvedTerminator(terminatorX, true, 0.5);
-        const rightEdge = curvePoints.map(p => p).join(', ');
-        return `polygon(${rightEdge}, 100% 100%, 100% 0%)`;
-        
-      } else if (phase <= 0.5) {
-        // First Quarter to Waxing Gibbous: expanding from right
-        const terminatorX = 100 - (illumination * 100);
-        const curvePoints = createCurvedTerminator(terminatorX, true, illumination > 0.5 ? -0.3 : 0.3);
-        return `polygon(${curvePoints.join(', ')}, 100% 100%, 100% 0%)`;
-        
-      } else if (phase <= 0.75) {
-        // Waning Gibbous to Last Quarter: shrinking from right
-        const terminatorX = illumination * 100;
-        const curvePoints = createCurvedTerminator(terminatorX, false, illumination > 0.5 ? -0.3 : 0.3);
-        return `polygon(0% 0%, 0% 100%, ${curvePoints.reverse().join(', ')})`;
-        
       } else {
-        // Waning Crescent: thin crescent on LEFT  
-        const terminatorX = illumination * 100 * 2; // Shrink towards left
-        const curvePoints = createCurvedTerminator(terminatorX, false, 0.5);
-        return `polygon(0% 0%, 0% 100%, ${curvePoints.reverse().join(', ')})`;
+        // Waning phases: light disappears from RIGHT side
+        if (illumination > 0.5) {
+          // Waning Gibbous: most of moon visible, dark crescent on RIGHT
+          const darkWidth = (1 - illumination) * 2; // 0 to 1
+          const ellipseWidth = darkWidth * 50;
+          const ellipsePosition = 100 - (darkWidth * 25);
+          return `ellipse(${100 - ellipseWidth}% 50% at 50% 50%)`;
+        } else {
+          // Waning Crescent: thin crescent on LEFT
+          const crescentWidth = illumination * 2; // 1 to 0
+          const ellipseWidth = crescentWidth * 50; // 50% to 0%
+          const ellipsePosition = crescentWidth * 25; // Position from left edge
+          return `ellipse(${ellipseWidth}% 50% at ${ellipsePosition}% 50%)`;
+        }
       }
     }
     
